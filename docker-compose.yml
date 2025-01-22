@@ -1,60 +1,60 @@
 services:
-  mysql:
-    image: mysql:latest
-    container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: docker_tp
-      MYSQL_USER: ruben
-      MYSQL_PASSWORD: ruben
-    volumes:
-      - db_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - online
+    mysql:
+        image: mysql:latest
+        container_name: mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - db_data:/var/lib/mysql
+        ports:
+            - "3306:3306"
+        networks:
+            - online
 
-  php:
-    image: php:8.0.2-fpm
-    container_name: php
-    build:
-      context: .
-      dockerfile: Dockerfile
-    working_dir: /var/www
-    volumes:
-      - ./site:/var/www/
-    depends_on:
-      - mysql
-    networks:
-      - online
+    php:
+        image: php:8.0.2-fpm
+        container_name: php
+        build:
+            context: .
+            dockerfile: Dockerfile
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www/
+        depends_on:
+            - mysql
+        networks:
+            - online
 
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
-      - ./site:/var/www/
-    depends_on:
-      - php
-    networks:
-      - online
+    nginx:
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx/conf.d/:/etc/nginx/conf.d/
+            - ./:/var/www/
+        depends_on:
+            - php
+        networks:
+            - online
 
-  phpmyadmin:
-    image: phpmyadmin:latest
-    ports:
-      - "8080:80"
-    environment:
-      PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: root
-    networks:
-      - online
-    depends_on:
-      - mysql
+    phpmyadmin:
+        image: phpmyadmin:latest
+        ports:
+            - "8080:80"
+        environment:
+            PMA_HOST: mysql
+            MYSQL_ROOT_PASSWORD: root
+        networks:
+            - online
+        depends_on:
+            - mysql
 
 volumes:
-  db_data:
+    db_data:
 
 networks:
-  online:
-    driver: bridge
+    online:
+        driver: bridge

@@ -38,7 +38,7 @@ RUN npm install npm@latest -g && \
 
 
 # Copy existing application directory contents
-COPY ./site /var/www
+COPY ./ /var/www
 
 # Setup working directory
 WORKDIR /var/www/
@@ -83,4 +83,4 @@ EXPOSE 9000
 
 
 # Use the environment variable in CMD
-CMD bash -c "$INIT_COMMANDS && php artisan migrate:fresh —seed && php-fpm"
+CMD bash -c "$INIT_COMMANDS && php artisan migrate:fresh --seed && php-fpm"
