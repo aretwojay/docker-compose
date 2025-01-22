@@ -55,16 +55,32 @@ USER ${USER}
 # Copy permission to selected user
 COPY --chown=${USER}:${GROUP} . .
 
-EXPOSE 9000
 
-# Install dependencies
-RUN composer install && \
+# Define environment variable for commands
+ENV INIT_COMMANDS="composer update && \
+composer install && \
+composer dump-autoload && \
+npm install && \
+npm run build && \
+php artisan config:clear && \
+php artisan key:generate"
+
+# Install dependencies and clear cache
+RUN composer update && \
+    composer install && \
+    composer dump-autoload && \
     npm install && \
-    npm run build
-
-# Clear cache 
-RUN php artisan config:clear && \
+    npm run build && \
+    php artisan config:clear && \
     php artisan key:generate
 
-CMD  php artisan migrate:install && \
-php artisan migrate --seed
+# Run migrations
+# RUN php artisan migrate:install && \
+# php artisan migrate --seed
+
+
+EXPOSE 9000
+
+
+# Use the environment variable in CMD
+CMD bash -c "$INIT_COMMANDS && php artisan migrate:fresh —seed && php-fpm"
