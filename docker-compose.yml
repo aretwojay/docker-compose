@@ -14,13 +14,28 @@ services:
         networks:
             - online
 
-    php:
-        image: php:8.1-fpm
-        container_name: php
+    php1:
+        image: php:8.0-fpm
+        container_name: php1
         build:
             context: .
             dockerfile: Dockerfile
         working_dir: /var/www
+        environment:
+            - APP_NAME=Serveur 1
+        volumes:
+            - ./:/var/www/
+        depends_on:
+            - mysql
+        networks:
+            - online
+    php2:
+        image: php:8.0-fpm
+        container_name: php2
+        working_dir: /var/www
+        environment:
+            - APP_NAME=Serveur 2
+        command: php-fpm
         volumes:
             - ./:/var/www/
         depends_on:
@@ -28,15 +43,28 @@ services:
         networks:
             - online
 
-    nginx:
+    nginx1:
         image: nginx:latest
+        container_name: nginx1
         ports:
             - "80:80"
         volumes:
             - ./nginx/conf.d/:/etc/nginx/conf.d/
             - ./:/var/www/
         depends_on:
-            - php
+            - php1
+        networks:
+            - online
+    nginx2:
+        image: nginx:latest
+        container_name: nginx2
+        ports:
+            - "81:81"
+        volumes:
+            - ./nginx/conf.d/:/etc/nginx/conf.d/
+            - ./:/var/www/
+        depends_on:
+            - php2
         networks:
             - online
 

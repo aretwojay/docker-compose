@@ -1,7 +1,6 @@
-FROM php:8.1-fpm
+FROM php:8.0-fpm
 
-ENV USER=ruben
-ENV GROUP=ruben
+USER root
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -42,18 +41,6 @@ COPY . /var/www
 
 # Setup working directory
 WORKDIR /var/www/
-
-# Create User and Group
-RUN groupadd -g 1000 ${GROUP} && useradd -u 1000 -ms /bin/bash -g ${GROUP} ${USER}
-
-# Grant Permissions
-RUN chown -R ${USER} /var/www
-
-# Select User
-USER ${USER}
-
-# Copy permission to selected user
-COPY --chown=${USER}:${GROUP} . .
 
 
 # Define environment variable for commands
