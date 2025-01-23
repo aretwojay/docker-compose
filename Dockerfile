@@ -38,7 +38,7 @@ RUN npm install npm@latest -g && \
 
 
 # Copy existing application directory contents
-COPY ./ /var/www
+COPY . /var/www
 
 # Setup working directory
 WORKDIR /var/www/
